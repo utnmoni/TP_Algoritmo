@@ -1,0 +1,272 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+ 
+void menu();
+
+typedef struct{
+    int idEquipo;
+    char nombre[31];
+    int potenciaAtaque;
+    int potenciaDefensa;
+   
+}Equipo;
+  
+void Altaequi();
+void Bajaequi();
+void Modifequi();
+void Listadoequi();
+
+
+ 
+int main(){
+    menu();
+    
+   return 0;
+}
+ 
+void menu(){
+    int opcion2;
+    do{
+      
+        printf("             ------------**************-----------------\n");
+        printf("             ------------**************-----------------\n");
+        printf("                          1. Agregar Equipo             \n");
+        printf("                          2. Eliminar Equipo            \n");
+        printf("                          3. Modificacion               \n");
+        printf("                          4. Ver Equipo                 \n");
+        printf("                          5. Salir                      \n");
+        printf("             -------------*************-----------------\n");
+        printf("             -------------Elija una Opcion--------------\n");
+        scanf("%d",&opcion2);
+        system("cls");
+      
+                        switch(opcion2){
+                            case 1:
+                                Altaequi();
+                                break;
+                            case 2:
+                                Bajaequi();
+                                break;
+                            case 3:
+                                Modifequi();
+                                break;
+                            case 4:
+                                Listadoequi();
+                                break;
+                            case 5: 
+                                menu(); 
+                                break;
+                          
+               
+ 
+            }
+
+    }
+	while (opcion2!=5);
+
+}
+
+void Altaequi(){
+    FILE *pf ;
+    int p;
+    Equipo equi;
+    
+    pf = fopen("Equipo.bin","ab");
+    printf("Ingrese ID de Equipo\n");
+    scanf("%i",&equi.idEquipo);
+
+  
+  
+
+
+    printf("Ingrese Nombre Equipo\n");
+    scanf("%s",equi.nombre);
+    printf("Potencia de Ataque de 0 a 100\n");
+    scanf("%i",&p);
+      while (  !(p>0&&p<100) )
+         {
+          printf("introdusca nuevamente un valor de 0 a 100\n");
+	      scanf("%i",&p);
+         }
+         equi.potenciaAtaque = p;
+  
+         printf("Potencia de Defensa de 0 a 100 \n");
+         scanf("%i",&p);
+       while (  !(p>0&&p<100) )
+         {
+         printf("introdusca nuevamente un valor de 0 a 100\n");
+      	 scanf("%i",&p);
+         }
+         equi.potenciaDefensa = p;
+  
+       
+    fseek(pf,0L,SEEK_END);
+    fwrite(&equi,sizeof(Equipo),1,pf);
+    fclose(pf);
+    system("cls");
+    menu();
+}
+ 
+void Listadoequi(){
+    FILE *pf;
+    Equipo equi;
+    pf = fopen("Equipo.bin","rb");
+    fread(&equi,sizeof(Equipo),1,pf);
+    while(!feof(pf)){
+        printf("%i ; %s ; %i ; %i\n",equi.idEquipo,equi.nombre,equi.potenciaAtaque,equi.potenciaDefensa);
+        fread(&equi,sizeof(Equipo),1,pf);
+        }
+        fclose(pf);
+}
+ 
+void Modifequi(){
+	
+             FILE *pf,*pfaux;
+            Equipo equi;
+          int idEquipoaux;
+         int p;
+    	pf = fopen("Equipo.bin","rb");
+     pfaux = fopen("Equipoaux.bin","ab");
+       printf("Ingrese ID del Equipo\n");
+        scanf("%i",&idEquipoaux);
+         fread(&equi,sizeof(Equipo),1,pf);
+        while (!feof(pf)){
+                if (equi.idEquipo != idEquipoaux){
+                    fseek(pfaux,0l,SEEK_END);
+                    fwrite(&equi,sizeof(Equipo),1,pfaux);
+                }else{
+                    printf("Ingrese Nombre del Equipo\n");
+                    scanf("%s",equi.nombre);
+                    printf("Ingrese Potencia de Ataque\n");
+                    scanf("%i",&p);
+                    
+       while (  !(p>0&&p<100) )
+          {
+          printf("introdusca nuevamente un valor de 0 a 100\n");
+	      scanf("%i",&p);
+          }
+          equi.potenciaAtaque = p;
+          
+          
+          
+          printf("Ingrese Potencia de Defensa\n");
+          scanf("%i",&p);
+        while (  !(p>0&&p<100) )
+          {
+          printf("Introdusca nuevamente un valor de 0 a 100\n");
+	      scanf("%i",&p);
+          }
+          equi.potenciaDefensa = p;
+          fseek(pfaux,0l,SEEK_END);
+          fwrite(&equi,sizeof(Equipo),1,pfaux);
+          }
+          fread(&equi,sizeof(Equipo),1,pf);
+          }
+    fclose(pf);
+    fclose(pfaux);
+   
+   
+    int opcion;
+    do{
+        
+        printf("          ------------**************----------------------\n");
+        printf("          -----Seguro que desea Modificar el Equipo-------\n");
+        printf("          ------------**************----------------------\n");
+        printf("                                                          \n");
+        printf("           1) Cancelar             2) Aceptar             \n");
+        printf("                                                          \n");
+        printf("          ------------**************----------------------\n");
+        printf("          --------------Elija una Opcion------------------\n");
+        scanf("%d",&opcion);
+        system("cls");
+      
+                switch(opcion){
+                            case 1:
+                                  menu();
+                                  break;
+                            case 2:
+                                  remove("Equipo.bin");
+                                  rename("Equipoaux.bin","Equipo.bin");
+                                  system("cls");
+                                  
+                                  
+        printf("             ------------**************-----------------\n");
+        printf("                                                        \n");                          
+        printf("             -----Se modifico el Equipo Correctamente---\n");
+        printf("                                                        \n");
+        printf("             ------------**************-----------------\n");
+                               
+        
+                                  menu();
+                                  break;
+                            case 3:
+                                  menu();
+                                  break;
+                           
+	       }
+    }while (opcion!=3);
+}
+    
+
+ 
+void Bajaequi(){
+       FILE *pf,*pfaux;
+     Equipo equi;
+    int idEquipoaux;
+    pf = fopen("Equipo.bin","rb");
+     pfaux = fopen("Equipoaux.bin","ab");
+      printf("Ingrese Codigo\n");
+       scanf("%i",&idEquipoaux);
+        fread(&equi,sizeof(Equipo),1,pf);
+    while (!feof(pf)){
+                if (equi.idEquipo != idEquipoaux){
+                    fseek(pfaux,0l,SEEK_END);
+                      fwrite(&equi,sizeof(Equipo),1,pfaux);
+                    }
+                    fread(&equi,sizeof(Equipo),1,pf);
+                    }
+    fclose(pf);
+    fclose(pfaux);
+    
+      int opcion;
+    do{
+        printf("             ------------**************-----------------\n");
+        printf("             ------------**************-----------------\n");
+        printf("             -------Seguro que desea Eliminar-----------\n");
+        printf("                                                        \n");
+        printf("                                                        \n");
+        printf("             1) Cancelar             2) Eliminar equipo \n");
+        printf("                                                        \n");
+        printf("                                                        \n");
+        printf("             ------------**************-----------------\n");
+        printf("             -------------Elija una Opcion--------------\n");
+        scanf("%d",&opcion);
+        system("cls");
+        
+  
+                switch(opcion){
+                            case 1:
+                                  menu();
+                                  break;
+                            case 2:
+                                  remove("Equipo.bin");
+                                  rename("Equipoaux.bin","Equipo.bin");
+                                  system("cls");
+                                  
+        printf("             ------------**************-----------------\n");
+        printf("                                                        \n");                          
+        printf("             --Se ha Eliminado el Equipo Correctamente--\n");
+        printf("                                                        \n");
+        printf("             ------------**************-----------------\n");
+                                  menu();
+                                  break;
+                            case 3:
+                                  menu();
+                                  break;
+                           
+	       }
+    }while (opcion!=3);
+}
+    
+
